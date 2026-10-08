@@ -12,8 +12,9 @@ Hindi + Hinglish सब्ज़ी delivery website। Static site (एक `ind
 1. **Database:** अगर नया Supabase project है तो Supabase → SQL Editor में `supabase/schema.sql` run करें। (मौजूदा project `hvvclavnemptsgaehrlb` में यह पहले से लगा है, दोबारा run न करें।)
 2. **Keys:** `index.html` में सबसे ऊपर `SB_URL` और `SB_KEY` हैं। यहाँ सिर्फ़ **publishable** key रखें। `service_role` / secret key कभी नहीं।
 3. **Host:** इस folder को Netlify Drop (app.netlify.com/drop), Vercel, Cloudflare Pages या GitHub Pages पर डालें।
-4. **Owner खाता:** site खोलकर 👤 → "पहली बार? खाता बनाएँ"। पहला खाता मालिक बनता है, इसलिए यह सबसे पहले करें।
-5. **Sign-up बंद करें:** Supabase → Authentication → Sign In / Providers → "Allow new users to sign up" बंद। "Confirm email" चालू है तो email का link खोलना होगा।
+4. **Owner पासवर्ड:** पहले Supabase → Authentication → Sign In / Providers में **Confirm email बंद** करें। फिर site खोलकर 👤 → "पहली बार? पासवर्ड बनाएँ" (कम से कम 8 अक्षर)। Login में email नहीं माँगा जाता; अंदर एक fixed खाता (`OWNER_EMAIL`, index.html में सबसे ऊपर) इस्तेमाल होता है। पहला खाता मालिक बनता है, इसलिए यह सबसे पहले करें।
+   - पासवर्ड भूलने पर: Supabase → Authentication → Users से उस खाते का पासवर्ड बदलें।
+5. **Sign-up बंद करें:** पासवर्ड बन जाने के बाद उसी जगह "Allow new users to sign up" बंद करें।
 6. **दुकान की location:** Admin → दुकान की सेटिंग में Latitude और Longitude भरें। इनके बिना ऑर्डर नहीं लगेगा।
 7. एक test सब्ज़ी जोड़ें और एक test ऑर्डर देकर देखें।
 

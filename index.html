@@ -58,6 +58,7 @@ select{margin:0}label{font-size:13px;color:var(--mut)}
 <script>
 const $=s=>document.querySelector(s);
 const SB_URL='https://hvvclavnemptsgaehrlb.supabase.co',SB_KEY='sb_publishable_7OMUYl6kkpbDEkk_WsmRvw_wasqwhGy';
+const OWNER_EMAIL='owner@ravisabzi.app'; // andar ka fixed account; login screen par email nahi dikhta
 let sb=null;try{sb=supabase.createClient(SB_URL,SB_KEY)}catch(e){}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ls={g:k=>{try{return localStorage.getItem(k)}catch(e){return null}},s:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
@@ -218,16 +219,16 @@ if(S.admin){const c=await sb.from('orders').select('*').order('created_at',{asce
 const refresh=async()=>{await loadAll();render(1)};
 async function checkAdmin(){S.admin=false;const {data}=await sb.auth.getSession();if(data.session){const r=await sb.rpc('is_admin');S.admin=r.data===true}S.unlocked=S.admin}
 async function logout(){try{await sb.auth.signOut()}catch(e){}S.admin=false;S.unlocked=false;S.edit=null;S.orders=[];render()}
-function login(el){el.innerHTML=`<div class="card"><h3>🔐 ${t('loginT')}</h3><p class="mut">${A('यह हिस्सा सिर्फ़ दुकान के मालिक रवि जी के लिए है। ईमेल और पासवर्ड से लॉगिन करें।','Yeh hissa sirf dukaan ke malik Ravi ji ke liye hai. Email aur password se login karein.')}</p><label>Email</label><input id="em" type="email" autocomplete="username"><label>${A('पासवर्ड','Password')}</label><input id="pw" type="password" autocomplete="current-password"><button id="ok" style="width:100%">${A('लॉगिन करें','Login Karein')}</button><button class="o" id="su" style="width:100%;margin-top:8px">${A('पहली बार? खाता बनाएँ','Pehli baar? Khata Banayein')}</button><button class="o" data-v="shop" style="width:100%;margin-top:8px">${t('back')}</button></div>`;
-const cred=()=>({email:$('#em').value.trim(),password:$('#pw').value});
+function login(el){el.innerHTML=`<div class="card"><h3>🔐 ${t('loginT')}</h3><p class="mut">${A('यह हिस्सा सिर्फ़ दुकान के मालिक रवि जी के लिए है। सिर्फ़ पासवर्ड डालें।','Yeh hissa sirf dukaan ke malik Ravi ji ke liye hai. Sirf password daalein.')}</p><label>${A('पासवर्ड','Password')}</label><input id="pw" type="password" autocomplete="current-password"><button id="ok" style="width:100%">${A('लॉगिन करें','Login Karein')}</button><button class="o" id="su" style="width:100%;margin-top:8px">${A('पहली बार? पासवर्ड बनाएँ','Pehli baar? Password Banayein')}</button><button class="o" data-v="shop" style="width:100%;margin-top:8px">${t('back')}</button></div>`;
+const cred=()=>({email:OWNER_EMAIL,password:$('#pw').value});
 const fin=async()=>{await checkAdmin();if(!S.admin){alert(A('यह खाता मालिक का नहीं है','Yeh account malik ka nahi hai'));await logout();return}await loadAll();render()};
 $('#ok').onclick=async()=>{const r=await sb.auth.signInWithPassword(cred());if(r.error){alert(r.error.message);return}fin()};
-$('#su').onclick=async()=>{const c=cred();if(c.password.length<6){alert(A('पासवर्ड कम से कम 6 अक्षर','Password kam se kam 6 akshar'));return}
-const r=await sb.auth.signUp(c);if(r.error){alert(r.error.message);return}if(!r.data.session){alert(A('आपके ईमेल पर confirm लिंक गया है। उसे खोलकर फिर लॉगिन करें।','Aapke email par confirm link gaya hai. Use kholkar phir login karein.'));return}
+$('#su').onclick=async()=>{const c=cred();if(c.password.length<8){alert(A('पासवर्ड कम से कम 8 अक्षर','Password kam se kam 8 akshar'));return}
+const r=await sb.auth.signUp(c);if(r.error){alert(r.error.message);return}if(!r.data.session){alert(A('Supabase में "Confirm email" बंद करें, फिर दोबारा कोशिश करें।','Supabase mein "Confirm email" band karein, phir dobara koshish karein.'));return}
 await sb.rpc('claim_admin');fin()}}
 function pwForm(el){el.innerHTML=asw()+`<div class="card"><h3>🔑 ${A('पासवर्ड बदलें','Password Badlein')}</h3><input id="n1" type="password" autocomplete="new-password" placeholder="${A('नया पासवर्ड','Naya password')}"><input id="n2" type="password" autocomplete="new-password" placeholder="${A('नया दोबारा लिखें','Naya dobara likhein')}"><button id="ok" style="width:100%">${A('सेव करें','Save Karein')}</button><br><button class="o" id="cx" style="width:100%">${A('वापस','Wapas')}</button></div>`;
 $('#cx').onclick=()=>{S.edit=null;render()};
-$('#ok').onclick=async()=>{const n=$('#n1').value;if(n.length<6||n!==$('#n2').value){alert(A('कम से कम 6 अक्षर और दोनों एक जैसे हों','Kam se kam 6 akshar aur dono ek jaise hon'));return}const r=await sb.auth.updateUser({password:n});if(r.error){alert(r.error.message);return}S.edit=null;toast('✔');render()}}
+$('#ok').onclick=async()=>{const n=$('#n1').value;if(n.length<8||n!==$('#n2').value){alert(A('कम से कम 8 अक्षर और दोनों एक जैसे हों','Kam se kam 8 akshar aur dono ek jaise hon'));return}const r=await sb.auth.updateUser({password:n});if(r.error){alert(r.error.message);return}S.edit=null;toast('✔');render()}}
 document.addEventListener('click',e=>{if(e.target.closest('[data-lock]'))logout()});
 let lastAct=Date.now();document.addEventListener('click',()=>lastAct=Date.now());
 setInterval(()=>{if(S.admin&&Date.now()-lastAct>1800000)logout()},60000);
